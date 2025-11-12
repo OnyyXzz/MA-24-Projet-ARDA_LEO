@@ -5,7 +5,7 @@ from pathlib import Path
 
 # Tentative d'importation de Pillow pour les images
 try:
-    from PIL import Image, ImageTk
+    from PIL import Image, ImageTk # type: ignore
     PILLOW_AVAILABLE = True
 except ImportError:
     PILLOW_AVAILABLE = False
