@@ -1,5 +1,6 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# Nom : main.py
+# Auteur : Arda Tuna Kaya
+# Date : 19.11.2025
 
 """
 Jeu de Blackjack Multijoueur

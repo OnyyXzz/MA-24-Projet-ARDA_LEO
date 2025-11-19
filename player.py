@@ -1,3 +1,8 @@
+# Nom : player.py
+# Auteur : Arda Tuna Kaya
+# Date : 19.11.2025
+
+
 class Player:
     """Classe représentant un joueur de Blackjack"""
     

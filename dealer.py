@@ -1,3 +1,7 @@
+# Nom : dealer.py
+# Auteur : Arda Tuna Kaya
+# Date : 19.11.2025
+
 class Dealer:
     """Classe représentant le croupier"""
     

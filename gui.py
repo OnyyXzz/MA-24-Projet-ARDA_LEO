@@ -1,3 +1,7 @@
+# Nom : gui.py
+# Auteur : Arda Tuna Kaya
+# Date : 19.11.2025
+
 # gui.py — Interface graphique Blackjack avec images des cartes
 # Style casino : fond vert, accents dorés, animations simples
 # Tous les commentaires sont en français

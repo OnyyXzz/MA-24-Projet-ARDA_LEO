@@ -1,3 +1,7 @@
+# Nom : blackjack.py
+# Auteur : Arda Tuna Kaya
+# Date : 19.11.2025
+
 import random
 from player import Player
 from dealer import Dealer
