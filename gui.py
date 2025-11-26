@@ -2,14 +2,10 @@
 # Auteur : Arda Tuna Kaya
 # Date : 19.11.2025
 
-# gui.py — Interface graphique Blackjack avec images des cartes
-# Style casino : fond vert, accents dorés, animations simples
-# Tous les commentaires sont en français
-
 import os
 import tkinter as tk
 from tkinter import messagebox, ttk
-from PIL import Image, ImageTk  # Pour gérer les images (JPEG/PNG) et redimensionnement
+from PIL import Image, ImageTk
 from blackjack import BlackjackGame
 
 # -------------------- Paramètres visuels --------------------
