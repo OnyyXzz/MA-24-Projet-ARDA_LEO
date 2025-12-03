@@ -1,5 +1,5 @@
 # Nom : dealer.py
-# Auteur : Arda Tuna Kaya
+# Auteur : Arda Tuna Kaya  et Leonardo Rodrigues
 # Date : 19.11.2025
 
 class Dealer:
