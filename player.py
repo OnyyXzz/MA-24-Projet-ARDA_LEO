@@ -87,4 +87,4 @@ class Player:
         return len(self.hand) == 2 and self.get_score() == 21
     
     def __str__(self):
-        return f"{self.name} - Solde: {self.balance}€ - Score: {self.get_score()}"
+        return f"{self.name} - Solde: {self.balance} CHF - Score: {self.get_score()}"
