@@ -1,10 +1,14 @@
 # Nom : gui.py
 # Auteur : Arda Tuna Kaya
-# Date : 19.11.2025
+# Mise à jour : Leonardo Rodrigues
+# Date : 17.12.2025
+# Version : 2.0
+# Description : Interface graphique du jeu Blackjack avec gestion des scores
+# Changements v2.0 : Intégration ScoreManager, affichage historique, import/export scores
 
 import os
 import tkinter as tk
-from tkinter import messagebox, ttk
+from tkinter import messagebox, ttk, filedialog
 from PIL import Image, ImageTk
 from blackjack import BlackjackGame
 
@@ -62,6 +66,12 @@ class BlackjackGUI:
         # Initialisation du jeu
         self.game = BlackjackGame()
         self.game.create_deck()
+        
+        # Gestionnaire des scores - game'den alıyoruz (dublicate'i önlemek için)
+        self.score_manager = self.game.score_manager
+        
+        # Proposer l'importation des anciens scores APRÈS l'initialisation du jeu
+        self._propose_import_scores()
 
         # Construction de l'interface
         self._build_layout()
@@ -154,8 +164,9 @@ class BlackjackGUI:
         self.hit_button = ttk.Button(btns, text="Tirer", command=self.hit, style="C.TButton")
         self.stand_button = ttk.Button(btns, text="Rester", command=self.stand, style="C.TButton")
         self.replay_button = ttk.Button(btns, text="Rejouer", command=self.show_betting_screen, style="C.TButton")
+        self.scores_button = ttk.Button(btns, text="Scores", command=self.show_scores_history, style="C.TButton")
         self.quit_button = ttk.Button(btns, text="Quitter", command=self.root.quit, style="C.TButton")
-        for b in (self.hit_button, self.stand_button, self.replay_button, self.quit_button):
+        for b in (self.hit_button, self.stand_button, self.replay_button, self.scores_button, self.quit_button):
             b.pack(side=tk.LEFT, padx=6)
 
         self.stats_label = ttk.Label(controls, text="", style="Small.TLabel", foreground=ACCENT_BLUE)
@@ -310,6 +321,7 @@ class BlackjackGUI:
         """Affiche les résultats finaux"""
         results = self.game.get_game_results()
         self.update_display(show_dealer_card=True)
+        
         text = "=== RÉSULTATS ===\n\n"
         text += f"Croupier: {results['dealer_score']} points\n\n"
         for i, player in enumerate([self.game.player1, self.game.player2], start=1):
@@ -324,6 +336,172 @@ class BlackjackGUI:
             else:
                 text += f"= ÉGALITÉ ! {msg}\n"
             text += f"Nouveau solde: {player.balance} CHF\n\n"
-        messagebox.showinfo("Fin de la partie", text)
+        
+        # Demander à l'utilisateur s'il veut enregistrer les scores
+        if messagebox.askyesno("Enregistrer les scores", 
+                               text + "\nVoulez-vous enregistrer les scores de cette manche ?"):
+            self.game.save_game_score()
+            messagebox.showinfo("Succès", "Les scores ont été enregistrés !")
+        
         self.replay_button.config(state=tk.NORMAL)
         self.status_label.config(text="Partie terminée !")
+    
+    # -------------------- Gestion des scores --------------------
+    def _propose_import_scores(self):
+        """Propose à l'utilisateur d'importer les anciens scores au démarrage
+        
+        Remarque : Cette méthode ne s'exécute qu'une fois au démarrage.
+        Elle détecte si l'utilisateur a d'anciens scores à importer.
+        """
+        if messagebox.askyesno("Importation des scores", 
+                               "Souhaitez-vous importer d'anciens scores ?\n(Choisissez un fichier scores.json)"):
+            file_path = filedialog.askopenfilename(
+                title="Sélectionner le fichier scores.json à importer",
+                filetypes=[("JSON files", "*.json"), ("All files", "*.*")]
+            )
+            if file_path:
+                if self.score_manager.import_scores(file_path):
+                    # Recharger les balances depuis les scores importés
+                    last_balances = self.score_manager.get_last_balances()
+                    self.game.player1.balance = last_balances.get("Joueur 1", 1000)
+                    self.game.player2.balance = last_balances.get("Joueur 2", 1000)
+                    messagebox.showinfo("Succès", "Les anciens scores ont été importés avec succès !")
+                else:
+                    messagebox.showerror("Erreur", "Impossible d'importer le fichier. Format invalide ?")
+        else:
+            # Si l'utilisateur dit "Non", réinitialiser les balances à 1000
+            self.game.player1.balance = 1000
+            self.game.player2.balance = 1000
+    
+    def show_scores_history(self):
+        """Affiche l'historique des scores enregistrés
+        
+        Fonctionnalité : Permet à l'utilisateur de consulter tous les scores
+        des manches précédentes avec des statistiques détaillées.
+        """
+        scores = self.score_manager.get_scores()
+        
+        if not scores:
+            messagebox.showinfo("Historique des scores", "Aucun score enregistré pour l'instant.")
+            return
+        
+        # Créer une nouvelle fenêtre pour afficher l'historique
+        history_window = tk.Toplevel(self.root)
+        history_window.title("Historique des scores")
+        history_window.geometry("900x600")
+        history_window.configure(bg=TABLE_BG)
+        
+        # Titre
+        title = ttk.Label(history_window, text=f"Historique des scores ({len(scores)} manches)",
+                         style="Title.TLabel")
+        title.pack(pady=10)
+        
+        # Créer un Treeview pour afficher les scores de manière tabulaire
+        tree_frame = tk.Frame(history_window, bg=TABLE_BG)
+        tree_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        
+        # Scrollbar
+        scrollbar = ttk.Scrollbar(tree_frame)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        # Créer le Treeview
+        columns = ("Date", "Joueur 1", "Résultat 1", "Score 1", "Joueur 2", "Résultat 2", "Score 2", "Croupier")
+        tree = ttk.Treeview(tree_frame, columns=columns, height=18, yscrollcommand=scrollbar.set)
+        tree.config(style="C.TLabel")
+        scrollbar.config(command=tree.yview)
+        
+        # Définir les en-têtes
+        tree.column("#0", width=0, stretch=tk.NO)
+        tree.column("Date", anchor=tk.CENTER, width=150)
+        tree.column("Joueur 1", anchor=tk.CENTER, width=100)
+        tree.column("Résultat 1", anchor=tk.CENTER, width=80)
+        tree.column("Score 1", anchor=tk.CENTER, width=70)
+        tree.column("Joueur 2", anchor=tk.CENTER, width=100)
+        tree.column("Résultat 2", anchor=tk.CENTER, width=80)
+        tree.column("Score 2", anchor=tk.CENTER, width=70)
+        tree.column("Croupier", anchor=tk.CENTER, width=70)
+        
+        tree.heading("#0", text="", anchor=tk.W)
+        tree.heading("Date", text="Date/Heure", anchor=tk.CENTER)
+        tree.heading("Joueur 1", text="Joueur 1", anchor=tk.CENTER)
+        tree.heading("Résultat 1", text="Résultat", anchor=tk.CENTER)
+        tree.heading("Score 1", text="Score", anchor=tk.CENTER)
+        tree.heading("Joueur 2", text="Joueur 2", anchor=tk.CENTER)
+        tree.heading("Résultat 2", text="Résultat", anchor=tk.CENTER)
+        tree.heading("Score 2", text="Score", anchor=tk.CENTER)
+        tree.heading("Croupier", text="Croupier", anchor=tk.CENTER)
+        
+        # Ajouter les données au Treeview
+        for idx, score in enumerate(scores):
+            # Traduction des résultats
+            def translate_result(result):
+                translations = {
+                    "win": "✓ Gagné",
+                    "lose": "✗ Perdu",
+                    "draw": "= Égalité",
+                    "blackjack": "★ Blackjack"
+                }
+                return translations.get(result, result)
+            
+            data = (
+                score["timestamp"],
+                score["joueur1"]["nom"],
+                translate_result(score["joueur1"]["resultat"]),
+                str(score["joueur1"]["score"]),
+                score["joueur2"]["nom"],
+                translate_result(score["joueur2"]["resultat"]),
+                str(score["joueur2"]["score"]),
+                str(score["croupier"]["score"])
+            )
+            tree.insert(parent="", index="end", text=str(idx+1), values=data)
+        
+        tree.pack(fill=tk.BOTH, expand=True)
+        
+        # Zone des statistiques
+        stats_frame = tk.Frame(history_window, bg=PANEL_BG)
+        stats_frame.pack(fill=tk.X, padx=10, pady=10)
+        
+        # Calculer les statistiques pour chaque joueur
+        stats_p1 = self.score_manager.get_player_stats("Joueur 1")
+        stats_p2 = self.score_manager.get_player_stats("Joueur 2")
+        
+        stats_text = f"Statistiques:\n\n"
+        stats_text += f"Joueur 1: {stats_p1['victoires']} victoires, {stats_p1['defaites']} défaites, "
+        stats_text += f"{stats_p1['egalites']} égalités, {stats_p1['blackjacks']} blackjacks | "
+        stats_text += f"Solde: {stats_p1['solde_final']} CHF\n\n"
+        stats_text += f"Joueur 2: {stats_p2['victoires']} victoires, {stats_p2['defaites']} défaites, "
+        stats_text += f"{stats_p2['egalites']} égalités, {stats_p2['blackjacks']} blackjacks | "
+        stats_text += f"Solde: {stats_p2['solde_final']} CHF"
+        
+        stats_label = ttk.Label(stats_frame, text=stats_text, style="Small.TLabel", justify=tk.LEFT)
+        stats_label.pack(pady=5)
+        
+        # Boutons d'action
+        buttons_frame = tk.Frame(history_window, bg=TABLE_BG)
+        buttons_frame.pack(pady=10)
+        
+        def export_scores():
+            """Exporte les scores vers un fichier JSON"""
+            file_path = filedialog.asksaveasfilename(
+                defaultextension=".json",
+                filetypes=[("JSON files", "*.json"), ("All files", "*.*")],
+                initialfile="scores_export.json"
+            )
+            if file_path:
+                if self.score_manager.export_scores(file_path):
+                    messagebox.showinfo("Succès", f"Les scores ont été exportés vers :\n{file_path}")
+                else:
+                    messagebox.showerror("Erreur", "Impossible d'exporter les scores.")
+        
+        def clear_scores():
+            """Efface tous les scores enregistrés"""
+            if messagebox.askyesno("Confirmation", "Êtes-vous sûr de vouloir effacer tous les scores ?"):
+                if self.score_manager.clear_scores():
+                    messagebox.showinfo("Succès", "Tous les scores ont été effacés.")
+                    history_window.destroy()
+                else:
+                    messagebox.showerror("Erreur", "Impossible d'effacer les scores.")
+        
+        ttk.Button(buttons_frame, text="Exporter les scores", command=export_scores, style="C.TButton").pack(side=tk.LEFT, padx=5)
+        ttk.Button(buttons_frame, text="Effacer tous les scores", command=clear_scores, style="C.TButton").pack(side=tk.LEFT, padx=5)
+        ttk.Button(buttons_frame, text="Fermer", command=history_window.destroy, style="C.TButton").pack(side=tk.LEFT, padx=5)

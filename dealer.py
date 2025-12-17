@@ -1,6 +1,8 @@
 # Nom : dealer.py
 # Auteur : Arda Tuna Kaya
-# Date : 19.11.2025
+# Date : 17.12.2025
+# Version : 2.0
+# Description : Modèle du croupier Blackjack
 
 class Dealer:
     """Classe représentant le croupier"""

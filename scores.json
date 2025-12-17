@@ -1,0 +1,97 @@
+[
+  {
+    "id": "5a8c3eb8",
+    "timestamp": "2025-12-17 14:20:25.288",
+    "joueur1": {
+      "nom": "Joueur 1",
+      "resultat": "win",
+      "score": 20,
+      "solde": 2000
+    },
+    "joueur2": {
+      "nom": "Joueur 2",
+      "resultat": "win",
+      "score": 18,
+      "solde": 1980
+    },
+    "croupier": {
+      "score": 17
+    }
+  },
+  {
+    "id": "f5210383",
+    "timestamp": "2025-12-17 14:20:57.640",
+    "joueur1": {
+      "nom": "Joueur 1",
+      "resultat": "win",
+      "score": 17,
+      "solde": 3000
+    },
+    "joueur2": {
+      "nom": "Joueur 2",
+      "resultat": "win",
+      "score": 17,
+      "solde": 2980
+    },
+    "croupier": {
+      "score": 26
+    }
+  },
+  {
+    "id": "8b7bc451",
+    "timestamp": "2025-12-17 14:21:20.567",
+    "joueur1": {
+      "nom": "Joueur 1",
+      "resultat": "win",
+      "score": 20,
+      "solde": 3010
+    },
+    "joueur2": {
+      "nom": "Joueur 2",
+      "resultat": "win",
+      "score": 20,
+      "solde": 2990
+    },
+    "croupier": {
+      "score": 22
+    }
+  },
+  {
+    "id": "514837ab",
+    "timestamp": "2025-12-17 14:38:58.058",
+    "joueur1": {
+      "nom": "Joueur 1",
+      "resultat": "lose",
+      "score": 16,
+      "solde": 2010
+    },
+    "joueur2": {
+      "nom": "Joueur 2",
+      "resultat": "win",
+      "score": 19,
+      "solde": 3990
+    },
+    "croupier": {
+      "score": 18
+    }
+  },
+  {
+    "id": "597d046b",
+    "timestamp": "2025-12-17 15:50:45.377",
+    "joueur1": {
+      "nom": "Joueur 1",
+      "resultat": "lose",
+      "score": 22,
+      "solde": 0
+    },
+    "joueur2": {
+      "nom": "Joueur 2",
+      "resultat": "win",
+      "score": 21,
+      "solde": 1500
+    },
+    "croupier": {
+      "score": 20
+    }
+  }
+]

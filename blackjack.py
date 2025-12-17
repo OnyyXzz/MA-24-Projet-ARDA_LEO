@@ -1,18 +1,31 @@
 # Nom : blackjack.py
 # Auteur : Arda Tuna Kaya
-# Date : 19.11.2025
+# Mise à jour : Leonardo Rodrigues
+# Date : 17.12.2025
+# Version : 2.0
+# Description : Logique principale du jeu Blackjack
+# Changements v2.0 : Intégration ScoreManager, persistance des balances
 
 import random
 from player import Player
 from dealer import Dealer
+from score_manager import ScoreManager
 
 class BlackjackGame:
     """Classe principale gérant la logique du jeu"""
     
     def __init__(self):
         self.deck = []
-        self.player1 = Player("Joueur 1")
-        self.player2 = Player("Joueur 2")
+        # Gestionnaire des scores pour l'enregistrement des manches
+        self.score_manager = ScoreManager()
+        
+        # Récupérer les derniers soldes si disponibles
+        last_balances = self.score_manager.get_last_balances()
+        p1_balance = last_balances.get("Joueur 1", 1000)
+        p2_balance = last_balances.get("Joueur 2", 1000)
+        
+        self.player1 = Player("Joueur 1", p1_balance)
+        self.player2 = Player("Joueur 2", p2_balance)
         self.dealer = Dealer()
         self.current_player = None
         self.game_state = "betting"  # betting, playing, dealer_turn, finished
@@ -136,3 +149,18 @@ class BlackjackGame:
             'player2': result2,
             'dealer_score': self.dealer.get_score()
         }
+    
+    def save_game_score(self):
+        """Enregistre les résultats de la manche actuelle dans l'historique"""
+        results = self.get_game_results()
+        return self.score_manager.add_score(
+            self.player1.name,
+            results['player1'][0],  # Statut (win, lose, draw, blackjack)
+            self.player1.get_score(),
+            self.player1.balance,
+            self.player2.name,
+            results['player2'][0],
+            self.player2.get_score(),
+            self.player2.balance,
+            self.dealer.get_score()
+        )
