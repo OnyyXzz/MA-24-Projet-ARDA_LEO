@@ -3,8 +3,6 @@
 # Date : 17.12.2025
 # Version : 2.0
 # Description : Modèle du croupier Blackjack
-# Auteur : Arda Tuna Kaya  et Leonardo Rodrigues
-# Date : 19.11.2025
 
 class Dealer:
     """Classe représentant le croupier"""

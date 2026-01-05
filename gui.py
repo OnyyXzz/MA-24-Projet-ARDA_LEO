@@ -1,12 +1,10 @@
 # Nom : gui.py
 # Auteur : Arda Tuna Kaya
 # Mise à jour : Leonardo Rodrigues
-# Date : 17.12.2025
+# Date : 19.12.2025
 # Version : 2.0
 # Description : Interface graphique du jeu Blackjack avec gestion des scores
 # Changements v2.0 : Intégration ScoreManager, affichage historique, import/export scores
-# Auteur : Arda Tuna Kaya et Leonardo Rodrigues
-# Date : 19.11.2025
 
 import os
 import tkinter as tk

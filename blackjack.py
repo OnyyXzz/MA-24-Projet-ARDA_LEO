@@ -5,8 +5,6 @@
 # Version : 2.0
 # Description : Logique principale du jeu Blackjack
 # Changements v2.0 : Intégration ScoreManager, persistance des balances
-# Auteur : Arda Tuna Kaya et Leonardo Rodrigues
-# Date : 19.11.2025
 
 import random
 from player import Player
