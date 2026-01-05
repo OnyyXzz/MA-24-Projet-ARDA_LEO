@@ -1,7 +1,7 @@
 # Nom : blackjack.py
 # Auteur : Arda Tuna Kaya
 # Mise à jour : Leonardo Rodrigues
-# Date : 17.12.2025
+# Date : 05.01.2026
 # Version : 2.0
 # Description : Logique principale du jeu Blackjack
 # Changements v2.0 : Intégration ScoreManager, persistance des balances

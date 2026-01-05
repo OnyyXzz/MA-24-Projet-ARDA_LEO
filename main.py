@@ -1,6 +1,6 @@
 # Nom : main.py
 # Auteur : Arda Tuna Kaya
-# Date : 17.12.2025
+# Date : 05.01.2026
 # Version : 2.0
 # Description : Point d'entrée de l'application Blackjack
 
